@@ -1,0 +1,28 @@
+body {
+  font-family: Arial, sans-serif;
+  width: 300px;
+}
+
+#app {
+  text-align: center;
+}
+
+.section {
+  margin-top: 20px;
+}
+
+#todo-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+#todo-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+}
+
+#todo-list li.completed {
+  text-decoration: line-through;
+  color: gray;
+}
