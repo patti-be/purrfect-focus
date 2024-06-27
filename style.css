@@ -1,10 +1,19 @@
 body {
   font-family: Arial, sans-serif;
   width: 300px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #app {
   text-align: center;
+}
+
+header {
+  margin-bottom: 20px;
 }
 
 .section {
@@ -19,10 +28,27 @@ body {
 #todo-list li {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 5px 0;
+  position: relative;
 }
 
 #todo-list li.completed {
   text-decoration: line-through;
   color: gray;
+}
+
+#todo-list li input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.todo-icons {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: none;
+}
+
+#todo-list li:hover .todo-icons {
+  display: block;
 }
