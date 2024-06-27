@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
     selectedDuration = duration;
     startTime = Date.now() - (selectedDuration * 60 * 1000 - remainingTime);
     timer = setInterval(updateTimerDisplay, 1000);
+    toggleTimerControls(false);
   }
 
   function resetTimerState() {
@@ -67,6 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
     secondsDisplay.textContent = "00";
     chrome.storage.local.remove("pomodoroTimer"); // Clear timer state in storage
     updateFocusedMinutesDisplay();
+    toggleTimerControls(true);
   }
 
   startTimerButton.addEventListener("click", startTimer);
@@ -83,12 +85,15 @@ document.addEventListener("DOMContentLoaded", function () {
         pomodoroTimer: { isRunning: true, endTime, selectedDuration },
       });
       timer = setInterval(updateTimerDisplay, 1000);
+      toggleTimerControls(false);
+      updateTimerDisplay(); // Update display immediately after starting
     }
   }
 
   function resetTimer() {
     chrome.storage.local.set({ pomodoroTimer: { isRunning: false } }); // Set timer as not running
     resetTimerState();
+    broadcastTimerReset(); // Broadcast reset to other tabs
   }
 
   function updateTimerDisplay() {
@@ -101,6 +106,8 @@ document.addEventListener("DOMContentLoaded", function () {
       saveFocusedMinutes();
       alert("Time is up! You focused for " + selectedDuration + " minutes.");
       chrome.storage.local.remove("pomodoroTimer"); // Clear timer state in storage
+      toggleTimerControls(true);
+      broadcastTimerReset(); // Broadcast reset to other tabs
     } else {
       const minutes = Math.floor(remainingTime / (1000 * 60));
       const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
@@ -136,10 +143,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function updateSelectedDuration() {
     selectedDuration = parseInt(timerOptions.value, 10);
+    minutesDisplay.textContent = String(selectedDuration).padStart(2, "0");
     if (isRunning) {
       clearInterval(timer);
       startTimer();
     }
+  }
+
+  function toggleTimerControls(showControls) {
+    if (showControls) {
+      timerOptions.style.display = "inline-block";
+      startTimerButton.style.display = "inline-block";
+      resetTimerButton.style.display = "none";
+    } else {
+      timerOptions.style.display = "none";
+      startTimerButton.style.display = "none";
+      resetTimerButton.style.display = "inline-block";
+    }
+  }
+
+  // Broadcast reset event to other tabs
+  function broadcastTimerReset() {
+    chrome.storage.local.set({ pomodoroTimer: { isRunning: false } });
   }
 
   // Listen for changes in pomodoroTimer state from other tabs
@@ -163,6 +188,27 @@ document.addEventListener("DOMContentLoaded", function () {
         0
       );
       updateTotalFocusedMinutesDisplay();
+    }
+  });
+
+  // Sync timer controls state across tabs
+  chrome.storage.onChanged.addListener(function (changes, namespace) {
+    if (namespace === "local" && changes.pomodoroTimer) {
+      const timerData = changes.pomodoroTimer.newValue;
+      if (timerData.isRunning) {
+        toggleTimerControls(false); // Hide select and start button
+      } else {
+        toggleTimerControls(true); // Show select and start button
+      }
+    }
+  });
+
+  // Initial check to sync controls state
+  chrome.storage.local.get("pomodoroTimer", (data) => {
+    if (data.pomodoroTimer && data.pomodoroTimer.isRunning) {
+      toggleTimerControls(false); // Hide select and start button
+    } else {
+      toggleTimerControls(true); // Show select and start button
     }
   });
 });
