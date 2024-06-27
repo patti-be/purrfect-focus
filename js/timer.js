@@ -164,14 +164,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Broadcast reset event to other tabs
   function broadcastTimerReset() {
-    chrome.storage.local.set({ pomodoroTimer: { isRunning: false } });
+    chrome.storage.local.set(
+      { pomodoroTimer: { isRunning: false } },
+      function () {
+        if (chrome.runtime.lastError) {
+          console.error(
+            "Error setting pomodoroTimer:",
+            chrome.runtime.lastError
+          );
+          return;
+        }
+        console.log("Timer reset broadcasted successfully.");
+      }
+    );
   }
 
   // Listen for changes in pomodoroTimer state from other tabs
   chrome.storage.onChanged.addListener(function (changes, namespace) {
     if (namespace === "local" && changes.pomodoroTimer) {
       const timerData = changes.pomodoroTimer.newValue;
-      if (!timerData.isRunning) {
+      if (timerData && !timerData.isRunning) {
         resetTimerState();
       }
     }
