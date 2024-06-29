@@ -11,10 +11,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const resetTimerButton = document.getElementById("reset-timer");
   const timerOptions = document.getElementById("timer-options");
   const focusedMinutesTodayElement = document.getElementById(
-    "focused-minutes-today"
+    "focused-minutes-today-txt"
   );
   const focusedMinutesTotalElement = document.getElementById(
-    "focused-minutes-total"
+    "focused-minutes-total-txt"
   );
 
   // Check if there's an active timer in storage
@@ -66,7 +66,6 @@ document.addEventListener("DOMContentLoaded", function () {
     clearInterval(timer);
     minutesDisplay.textContent = String(selectedDuration).padStart(2, "0");
     secondsDisplay.textContent = "00";
-    chrome.storage.local.remove("pomodoroTimer"); // Clear timer state in storage
     updateFocusedMinutesDisplay();
     toggleTimerControls(true);
   }
@@ -81,9 +80,12 @@ document.addEventListener("DOMContentLoaded", function () {
       selectedDuration = parseInt(timerOptions.value, 10);
       startTime = Date.now();
       const endTime = startTime + selectedDuration * 60 * 1000;
-      chrome.storage.local.set({
-        pomodoroTimer: { isRunning: true, endTime, selectedDuration },
-      });
+      chrome.storage.local.set(
+        { pomodoroTimer: { isRunning: true, endTime, selectedDuration } },
+        () => {
+          broadcastTimerState(); // Broadcast start state to other tabs
+        }
+      );
       timer = setInterval(updateTimerDisplay, 1000);
       toggleTimerControls(false);
       updateTimerDisplay(); // Update display immediately after starting
@@ -91,9 +93,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function resetTimer() {
-    chrome.storage.local.set({ pomodoroTimer: { isRunning: false } }); // Set timer as not running
-    resetTimerState();
-    broadcastTimerReset(); // Broadcast reset to other tabs
+    chrome.storage.local.set({ pomodoroTimer: { isRunning: false } }, () => {
+      resetTimerState();
+      broadcastTimerState(); // Broadcast reset state to other tabs
+    });
   }
 
   function updateTimerDisplay() {
@@ -105,9 +108,10 @@ document.addEventListener("DOMContentLoaded", function () {
       focusedMinutesTotal += selectedDuration;
       saveFocusedMinutes();
       alert("Time is up! You focused for " + selectedDuration + " minutes.");
-      chrome.storage.local.remove("pomodoroTimer"); // Clear timer state in storage
-      toggleTimerControls(true);
-      broadcastTimerReset(); // Broadcast reset to other tabs
+      chrome.storage.local.set({ pomodoroTimer: { isRunning: false } }, () => {
+        toggleTimerControls(true);
+        broadcastTimerState(); // Broadcast reset to other tabs
+      });
     } else {
       const minutes = Math.floor(remainingTime / (1000 * 60));
       const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
@@ -162,31 +166,46 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Broadcast reset event to other tabs
-  function broadcastTimerReset() {
-    chrome.storage.local.set(
-      { pomodoroTimer: { isRunning: false } },
-      function () {
-        if (chrome.runtime.lastError) {
-          console.error(
-            "Error setting pomodoroTimer:",
-            chrome.runtime.lastError
-          );
-          return;
+  // Broadcast timer state to other tabs
+  function broadcastTimerState() {
+    chrome.storage.local.get("pomodoroTimer", (data) => {
+      chrome.storage.local.set(
+        { pomodoroTimer: data.pomodoroTimer },
+        function () {
+          if (chrome.runtime.lastError) {
+            console.error(
+              "Error setting pomodoroTimer:",
+              chrome.runtime.lastError
+            );
+            return;
+          }
+          console.log("Timer state broadcasted successfully.");
         }
-        console.log("Timer reset broadcasted successfully.");
-      }
-    );
+      );
+    });
   }
 
   // Listen for changes in pomodoroTimer state from other tabs
   chrome.storage.onChanged.addListener(function (changes, namespace) {
     if (namespace === "local" && changes.pomodoroTimer) {
       const timerData = changes.pomodoroTimer.newValue;
-      if (timerData && !timerData.isRunning) {
-        resetTimerState();
+      if (timerData && typeof timerData.isRunning !== "undefined") {
+        if (timerData.isRunning) {
+          toggleTimerControls(false); // Hide select and start button
+        } else {
+          resetTimerState();
+          toggleTimerControls(true); // Show select and start button
+        }
+      } else {
+        // Handle cases where timerData is not defined or isRunning is not defined
+        console.warn(
+          "Unexpected timerData structure or undefined isRunning property",
+          timerData
+        );
+        toggleTimerControls(true); // Default to showing select and start button
       }
     }
+
     // Update focused minutes if changed in storage
     if (changes.focusData) {
       const today = new Date();
@@ -200,18 +219,6 @@ document.addEventListener("DOMContentLoaded", function () {
         0
       );
       updateTotalFocusedMinutesDisplay();
-    }
-  });
-
-  // Sync timer controls state across tabs
-  chrome.storage.onChanged.addListener(function (changes, namespace) {
-    if (namespace === "local" && changes.pomodoroTimer) {
-      const timerData = changes.pomodoroTimer.newValue;
-      if (timerData.isRunning) {
-        toggleTimerControls(false); // Hide select and start button
-      } else {
-        toggleTimerControls(true); // Show select and start button
-      }
     }
   });
 
