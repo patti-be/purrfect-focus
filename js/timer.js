@@ -191,10 +191,15 @@ document.addEventListener("DOMContentLoaded", function () {
       const timerData = changes.pomodoroTimer.newValue;
       if (timerData && typeof timerData.isRunning !== "undefined") {
         if (timerData.isRunning) {
-          toggleTimerControls(false); // Hide select and start button
+          const remainingTime = timerData.endTime - Date.now();
+          if (remainingTime > 0) {
+            clearInterval(timer);
+            startExistingTimer(remainingTime, timerData.selectedDuration);
+          } else {
+            resetTimerState();
+          }
         } else {
           resetTimerState();
-          toggleTimerControls(true); // Show select and start button
         }
       } else {
         // Handle cases where timerData is not defined or isRunning is not defined
