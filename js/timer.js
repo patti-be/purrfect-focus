@@ -16,40 +16,47 @@ document.addEventListener("DOMContentLoaded", function () {
   const focusedMinutesTotalElement = document.getElementById(
     "focused-minutes-total-txt"
   );
+  const pointsElement = document.getElementById("points");
 
   // Check if there's an active timer in storage
-  chrome.storage.local.get(["pomodoroTimer", "focusData"], (data) => {
-    if (data.pomodoroTimer && data.pomodoroTimer.isRunning) {
-      const { endTime, selectedDuration } = data.pomodoroTimer;
-      const remainingTime = endTime - Date.now();
-      if (remainingTime > 0) {
-        startExistingTimer(remainingTime, selectedDuration);
+  chrome.storage.local.get(
+    ["pomodoroTimer", "focusData", "totalPoints"],
+    (data) => {
+      if (data.pomodoroTimer && data.pomodoroTimer.isRunning) {
+        const { endTime, selectedDuration } = data.pomodoroTimer;
+        const remainingTime = endTime - Date.now();
+        if (remainingTime > 0) {
+          startExistingTimer(remainingTime, selectedDuration);
+        } else {
+          resetTimerState();
+        }
       } else {
         resetTimerState();
       }
-    } else {
-      resetTimerState();
-    }
 
-    // Calculate today's focused minutes and update display
-    const today = new Date();
-    const dateKey = `${today.getFullYear()}-${
-      today.getMonth() + 1
-    }-${today.getDate()}`;
-    if (data.focusData && data.focusData[dateKey]) {
-      focusedMinutesToday = data.focusData[dateKey];
-      updateFocusedMinutesDisplay();
-    }
+      // Calculate today's focused minutes and update display
+      const today = new Date();
+      const dateKey = `${today.getFullYear()}-${
+        today.getMonth() + 1
+      }-${today.getDate()}`;
+      if (data.focusData && data.focusData[dateKey]) {
+        focusedMinutesToday = data.focusData[dateKey];
+        updateFocusedMinutesDisplay();
+      }
 
-    // Calculate total focused minutes and update display
-    if (data.focusData) {
-      focusedMinutesTotal = Object.values(data.focusData).reduce(
-        (acc, val) => acc + val,
-        0
-      );
-      updateTotalFocusedMinutesDisplay();
+      // Calculate total focused minutes and update display
+      if (data.focusData) {
+        focusedMinutesTotal = Object.values(data.focusData).reduce(
+          (acc, val) => acc + val,
+          0
+        );
+        updateTotalFocusedMinutesDisplay();
+      }
+
+      // Update total points display
+      pointsElement.textContent = data.totalPoints || 0;
     }
-  });
+  );
 
   function startExistingTimer(remainingTime, duration) {
     isRunning = true;
@@ -107,6 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
       focusedMinutesToday += selectedDuration;
       focusedMinutesTotal += selectedDuration;
       saveFocusedMinutes();
+      addPoints(selectedDuration);
       alert("Time is up! You focused for " + selectedDuration + " minutes.");
       chrome.storage.local.set({ pomodoroTimer: { isRunning: false } }, () => {
         toggleTimerControls(true);
@@ -134,6 +142,27 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       focusData[dateKey] += selectedDuration;
       chrome.storage.local.set({ focusData });
+    });
+  }
+
+  function addPoints(duration) {
+    let points = 0;
+    if (duration === 2) {
+      points = 5;
+    } else if (duration === 25) {
+      points = 5;
+    } else if (duration === 50) {
+      points = 15;
+    } else if (duration === 75) {
+      points = 25;
+    }
+
+    chrome.storage.local.get("totalPoints", (data) => {
+      let totalPoints = data.totalPoints || 0;
+      totalPoints += points;
+      chrome.storage.local.set({ totalPoints }, () => {
+        pointsElement.textContent = totalPoints;
+      });
     });
   }
 
@@ -224,6 +253,11 @@ document.addEventListener("DOMContentLoaded", function () {
         0
       );
       updateTotalFocusedMinutesDisplay();
+    }
+
+    // Update total points if changed in storage
+    if (changes.totalPoints) {
+      pointsElement.textContent = changes.totalPoints.newValue || 0;
     }
   });
 
