@@ -1,0 +1,411 @@
+:root {
+  --white: white;
+  --black: black;
+}
+
+body {
+  color: #333;
+  background-color: #ffedd6;
+  font-family: Cookies, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 36px;
+}
+
+.clock {
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  display: flex;
+  position: relative;
+}
+
+.progress-bar {
+  justify-content: space-between;
+  margin-top: 16px;
+  margin-left: 32px;
+  margin-right: 32px;
+  display: flex;
+}
+
+.main {
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.stats {
+  width: 33.3333%;
+  display: flex;
+}
+
+.points {
+  flex-flow: column;
+  align-items: center;
+  margin-top: 16px;
+  font-size: 48px;
+  line-height: 1;
+  display: none;
+  position: absolute;
+  top: 0%;
+  bottom: auto;
+  left: 0%;
+  right: 0%;
+}
+
+.level {
+  justify-content: flex-end;
+  width: 33.3333%;
+  display: flex;
+}
+
+.heading {
+  font-family: Cookies, sans-serif;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.text-gray {
+  color: #797979;
+  text-align: center;
+  font-size: 18px;
+}
+
+.progress-bar_line {
+  margin-right: 8px;
+}
+
+.stats-block {
+  flex-flow: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin-right: 16px;
+  display: flex;
+}
+
+.minutes {
+  margin-bottom: 8px;
+  font-size: 32px;
+}
+
+.animation {
+  width: 390px;
+  position: absolute;
+}
+
+.play-btn {
+  cursor: pointer;
+  background-color: #f3ae55;
+  border-radius: 50px;
+  justify-content: center;
+  align-items: center;
+  width: 86px;
+  height: 86px;
+  display: flex;
+  position: relative;
+  box-shadow: 1px 4px 5px rgba(0, 0, 0, .2);
+}
+
+.flex {
+  justify-content: flex-start;
+  align-items: flex-end;
+  display: flex;
+}
+
+.section-todo {
+  margin-top: 16px;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+.dropdown_txt {
+  font-size: 26px;
+}
+
+.image {
+  width: 300px;
+  margin-left: 52px;
+  padding-left: 0;
+  position: absolute;
+}
+
+.image-2 {
+  position: absolute;
+}
+
+.pointss {
+  justify-content: center;
+  width: 33.3333%;
+  display: flex;
+}
+
+.points_inner {
+  flex-flow: column;
+  align-self: center;
+  align-items: center;
+  margin-right: 16px;
+  display: flex;
+}
+
+.hide {
+  display: block;
+}
+
+.play-btn_inner {
+  z-index: -2;
+  background-color: #ae834c;
+  border-radius: 50%;
+  width: 86px;
+  height: 86px;
+  position: absolute;
+  top: 0%;
+  bottom: 0%;
+  left: 0%;
+  right: 0%;
+  transform: translate(0, 2px);
+}
+
+.timer-btns {
+  grid-column-gap: 24px;
+  grid-row-gap: 24px;
+  margin-top: 54px;
+  margin-bottom: 48px;
+  display: flex;
+}
+
+.timer_btn {
+  color: #33312b;
+  background-color: #ffdbad;
+  border-radius: 10px;
+  height: 40px;
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.timer_btn.is-active {
+  color: #fff7ee;
+  cursor: pointer;
+  background-color: #f3ae55;
+}
+
+.todo-dropdown_top {
+  cursor: pointer;
+  align-items: center;
+  width: 160px;
+  height: 50px;
+  display: flex;
+}
+
+.todo-dropdown_text {
+  margin-right: 8px;
+  font-size: 24px;
+  display: inline-block;
+}
+
+.to-do_dropdown {
+  width: 20%;
+}
+
+.todo-dropdown_bottom {
+  z-index: 3;
+  background-color: #fff3e4;
+  border: 1px solid #d4c2b2;
+  border-radius: 27px;
+  width: 400px;
+  padding: 24px 32px;
+  position: absolute;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+}
+
+.todo-dropdown_bottom_inner {
+  border-radius: 27px;
+}
+
+.task-input {
+  border-radius: 6px;
+  width: 100%;
+}
+
+.task-input-wrapper {
+  font-family: Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+  position: relative;
+}
+
+.btn-add {
+  background-color: #fabd6f;
+  border-radius: 6px;
+  height: 80%;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  position: absolute;
+  top: 10%;
+  bottom: 10%;
+  left: auto;
+  right: 2%;
+}
+
+.wrapper {
+  display: flex;
+}
+
+.timer {
+  flex-flow: column;
+  align-items: center;
+  width: 60%;
+  padding-top: 64px;
+  display: flex;
+}
+
+.badges {
+  width: 20%;
+}
+
+.clock_img {
+  width: 100%;
+}
+
+.totalpoints {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.level_inner, .points-wrapper {
+  justify-content: center;
+  align-items: flex-start;
+  display: flex;
+}
+
+.level_img {
+  margin-top: 16px;
+}
+
+.footer {
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+.timer-countdown {
+  grid-column-gap: 16px;
+  grid-row-gap: 16px;
+  grid-template-rows: auto auto;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-columns: 1fr;
+  font-family: Inter, sans-serif;
+  font-size: 127px;
+  display: flex;
+}
+
+@media screen and (max-width: 991px) {
+  .level_inner {
+    flex-flow: column;
+    align-items: flex-end;
+    display: flex;
+  }
+
+  .level_img {
+    margin-top: 0;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .clock {
+    width: 80%;
+  }
+
+  .minutes {
+    font-size: 29px;
+  }
+
+  .to-do_dropdown, .todo-dropdown_bottom {
+    width: 100%;
+  }
+
+  .wrapper {
+    flex-flow: wrap-reverse;
+  }
+
+  .timer, .badges {
+    width: 100%;
+  }
+
+  .todo-dropdown_icon {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .clock {
+    width: 100%;
+  }
+
+  .stats {
+    flex-flow: column;
+    display: none;
+  }
+
+  .text-gray {
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .stats-block {
+    margin-top: 16px;
+  }
+
+  .minutes {
+    font-size: 24px;
+  }
+
+  .flex {
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .timer-btns {
+    grid-column-gap: 16px;
+    grid-row-gap: 16px;
+  }
+
+  .to-do_dropdown {
+    margin-top: 24px;
+  }
+
+  .timer {
+    padding-top: 12px;
+  }
+
+  .totalpoints {
+    font-size: 48px;
+  }
+
+  .level_inner {
+    flex: 0 auto;
+  }
+
+  .points-wrapper {
+    justify-content: flex-start;
+    align-items: center;
+  }
+}
+
+
+@font-face {
+  font-family: 'Cookies';
+  src: url('../fonts/Cookies.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

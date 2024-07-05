@@ -1,59 +1,160 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Pomogatto</title>
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
-  </head>
-  <body>
-    <div id="app">
-      <header>
-        <h1 id="greeting">Good Morning!</h1>
-        <div id="date"></div>
-        <div id="weather"></div>
-      </header>
+<!--  This site was created in Webflow. https://webflow.com  --><!--  Last Published: Thu Jul 04 2024 18:36:35 GMT+0000 (Coordinated Universal Time)  -->
+<html data-wf-page="6682db6aa13df2a3b7e0113c" data-wf-site="6682db6aa13df2a3b7e01134">
 
-      <main>
-        <div class="section">
-          <h2>To-Do List</h2>
-          <ul id="todo-list"></ul>
-          <input type="text" id="new-todo" placeholder="New task..." />
-          <button id="add-todo">Add</button>
-        </div>
+<head>
+  <meta charset="utf-8">
+  <title>Pomogatto</title>
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <meta content="Webflow" name="generator">
+  <link href="css/normalize.css" rel="stylesheet" type="text/css">
+  <link href="css/webflow.css" rel="stylesheet" type="text/css">
+  <link href="css/pomogatto.webflow.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <script src="js/extra.js"></script>
+  <script src="js/jquery.min.js"></script>
+</head>
 
-        <div class="section">
-          <h2>Pomodoro Timer</h2>
-          <div id="timer">
-            <span id="minutes">25</span>:<span id="seconds">00</span>
-          </div>
-          <select id="timer-options">
-            <option value="2">2 minutes</option>
-            <option value="25">25 minutes</option>
-            <option value="50">50 minutes</option>
-            <option value="75">75 minutes</option>
-          </select>
-          <button id="start-timer">Start</button>
-          <button id="reset-timer">Reset</button>
-          <p id="focused-minutes-today">
-            Minutes Focused Today: <span id="focused-minutes-today-txt">0</span>
-          </p>
-          <p id="focused-minutes-total">
-            Overall Minutes Focused:
-            <span id="focused-minutes-total-txt">0</span>
-          </p>
+<body>
+  <header class="progress-bar">
+    <div class="stats">
+      <div class="stats-block">
+        <div class="flex">
+          <div id="focused-minutes-today-txt" class="minutes">80</div>
+          <div>min</div>
         </div>
-        <div class="section">
-          <p>total points</p>
-          <p id="points"></p>
+        <div class="text-gray">today</div>
+      </div>
+      <div class="stats-block">
+        <div class="flex">
+          <div id="focused-minutes-total-txt" class="minutes">563</div>
+          <div>min</div>
         </div>
-      </main>
+        <div class="text-gray">total</div>
+      </div>
     </div>
+    <div class="pointss">
+      <div class="points_inner">
+        <div class="points-wrapper">
+          <div class="totalpoints" id="points">80</div>
+        </div>
+        <div class="text-gray">points</div>
+      </div>
+    </div>
+    <div class="level">
+      <div class="level_inner">
+        <div>
+          <h2 class="heading">Novice</h2><img src="imgs/level-bar.png" loading="lazy" alt=""
+            class="progress-bar_line">
+        </div><img src="imgs/lisca.png" loading="lazy" alt="" class="level_img">
+      </div>
+    </div>
+  </header>
+  <main class="section-todo">
+    <div class="wrapper">
+      <article class="to-do_dropdown">
+        <div data-w-id="aa37ea81-0029-ccdc-0b1d-978b8c8e4504" class="todo-dropdown_top">
+          <div class="todo-dropdown_text">TO-DOs</div><img src="imgs/chevron-down.svg" loading="lazy"
+            data-w-id="02d13d03-a9c3-2876-ed14-a7086d91b32b" alt="" class="todo-dropdown_icon">
+        </div>
+        <div data-w-id="c01244da-950f-123c-8e10-410c086b4922" class="todo-dropdown_bottom">
+          <div class="w-form">
+            <div class="task-input-wrapper" data-wf-page-id="6682db6aa13df2a3b7e0113c"
+              data-wf-element-id="fa69e6ce-44d6-bd9e-c87f-64554fd6a52a">
+              <input class="task-input w-input" maxlength="256" placeholder="Add Task" type="text" id="new-todo">
+              <button class="btn-add w-button" id="add-todo">Add</button>
+            </div>
+            <ul role="list" id="todo-list" class="w-list-unstyled">
+            </ul>
+          </div>
+      </article>
+      <div class="timer">
+        <div class="clock"><img src="imgs/clock-circle-outer.svg" loading="lazy" alt="" class="clock_img"></div>
+        <div class="timer-btns">
+          <a href="#" class="timer_btn is-active w-button" data-duration="25">25min</a>
+          <a href="#" class="timer_btn w-button" data-duration="50">50min</a>
+          <a href="#" class="timer_btn w-button" data-duration="75">75min</a>
+        </div>
+        <div id="timer" class="timer-countdown">
+          <div class="minutes" id="minutes"></div>
+          <div class="dots">
+            <div>:</div>
+          </div>
+          <div class="seconds" id="seconds"></div>
+        </div>
+        <div id="start-timer" class="play-btn"><img src="imgs/triangle-play.svg" loading="lazy" alt=""
+            class="image-3">
+          <div class="play-btn_inner"></div>
+        </div>
+        <a id="reset-timer" href="#" class="timer_btn is-active w-button">I give up</a>
+      </div>
+      <div class="badges"></div>
+    </div>
+  </main>
+  <footer class="footer"></footer>
+  <script src="js/webflow.js" type="text/javascript"></script>
+</body>
 
-    <script src="js/todo.js"></script>
-    <script src="js/timer.js"></script>
-    <script src="js/main.js"></script>
-  </body>
 </html>
+
+
+
+<!-- <html>
+
+<head>
+  <title>Pomogatto</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+</head>
+
+<body>
+  <div id="app">
+    <header>
+      <h1 id="greeting">Good Morning!</h1>
+      <div id="date"></div>
+      <div id="weather"></div>
+    </header>
+
+    <main>
+      <div class="section">
+        <h2>To-Do List</h2>
+        <ul id="todo-list"></ul>
+        <input type="text" id="new-todo" placeholder="New task..." />
+        <button id="add-todo">Add</button>
+      </div>
+
+      <div class="section">
+        <h2>Pomodoro Timer</h2>
+        <div id="timer">
+          <span id="minutes">25</span>:<span id="seconds">00</span>
+        </div>
+        <select id="timer-options">
+          <option value="2">2 minutes</option>
+          <option value="25">25 minutes</option>
+          <option value="50">50 minutes</option>
+          <option value="75">75 minutes</option>
+        </select>
+        <button id="start-timer">Start</button>
+        <button id="reset-timer">Reset</button>
+        <p id="focused-minutes-today">
+          Minutes Focused Today: <span id="focused-minutes-today-txt">0</span>
+        </p>
+        <p id="focused-minutes-total">
+          Overall Minutes Focused:
+          <span id="focused-minutes-total-txt">0</span>
+        </p>
+      </div>
+      <div class="section">
+        <p>total points</p>
+        <p id="points"></p>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/todo.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html> -->

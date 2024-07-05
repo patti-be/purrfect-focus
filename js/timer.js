@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const secondsDisplay = document.getElementById("seconds");
   const startTimerButton = document.getElementById("start-timer");
   const resetTimerButton = document.getElementById("reset-timer");
-  const timerOptions = document.getElementById("timer-options");
+  const timerButtons = document.querySelectorAll(".timer_btn");
   const focusedMinutesTodayElement = document.getElementById(
     "focused-minutes-today-txt"
   );
@@ -68,7 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function resetTimerState() {
     isRunning = false;
-    selectedDuration = parseInt(timerOptions.value, 10);
     startTime = null;
     clearInterval(timer);
     minutesDisplay.textContent = String(selectedDuration).padStart(2, "0");
@@ -79,12 +78,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   startTimerButton.addEventListener("click", startTimer);
   resetTimerButton.addEventListener("click", resetTimer);
-  timerOptions.addEventListener("change", updateSelectedDuration);
+
+  timerButtons.forEach((button) => {
+    button.addEventListener("click", function (event) {
+      event.preventDefault();
+      updateSelectedDuration(button);
+    });
+  });
 
   function startTimer() {
     if (!isRunning) {
       isRunning = true;
-      selectedDuration = parseInt(timerOptions.value, 10);
       startTime = Date.now();
       const endTime = startTime + selectedDuration * 60 * 1000;
       chrome.storage.local.set(
@@ -174,9 +178,15 @@ document.addEventListener("DOMContentLoaded", function () {
     focusedMinutesTotalElement.textContent = focusedMinutesTotal;
   }
 
-  function updateSelectedDuration() {
-    selectedDuration = parseInt(timerOptions.value, 10);
+  function updateSelectedDuration(button) {
+    // Remove the 'is-active' class from all buttons
+    timerButtons.forEach((btn) => btn.classList.remove("is-active"));
+    // Add the 'is-active' class to the clicked button
+    button.classList.add("is-active");
+
+    selectedDuration = parseInt(button.getAttribute("data-duration"), 10);
     minutesDisplay.textContent = String(selectedDuration).padStart(2, "0");
+
     if (isRunning) {
       clearInterval(timer);
       startTimer();
@@ -185,11 +195,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function toggleTimerControls(showControls) {
     if (showControls) {
-      timerOptions.style.display = "inline-block";
+      document.querySelector(".timer-btns").style.display = "inline-block";
       startTimerButton.style.display = "inline-block";
       resetTimerButton.style.display = "none";
     } else {
-      timerOptions.style.display = "none";
+      document.querySelector(".timer-btns").style.display = "none";
       startTimerButton.style.display = "none";
       resetTimerButton.style.display = "inline-block";
     }
