@@ -19,6 +19,33 @@ document.addEventListener("DOMContentLoaded", function () {
   const pointsElement = document.getElementById("points");
   const timerElement = document.getElementById("timer");
 
+  // Check daily reset at midnight
+  setInterval(checkDailyReset, 60 * 1000); // Check every minute
+
+  function checkDailyReset() {
+    const now = new Date();
+    if (now.getHours() === 0 && now.getMinutes() === 0) {
+      resetDailyFocusedMinutes();
+    }
+  }
+
+  function resetDailyFocusedMinutes() {
+    const today = new Date();
+    const dateKey = `${today.getFullYear()}-${
+      today.getMonth() + 1
+    }-${today.getDate()}`;
+    chrome.storage.local.get("focusData", (data) => {
+      let focusData = data.focusData || {};
+      if (focusData[dateKey]) {
+        focusData[dateKey] = 0;
+        chrome.storage.local.set({ focusData }, () => {
+          focusedMinutesToday = 0;
+          updateFocusedMinutesDisplay();
+        });
+      }
+    });
+  }
+
   // Check if there's an active timer in storage
   chrome.storage.local.get(
     ["pomodoroTimer", "focusData", "totalPoints"],
@@ -65,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
     startTime = Date.now() - (selectedDuration * 60 * 1000 - remainingTime);
     timer = setInterval(updateTimerDisplay, 1000);
     toggleTimerControls(false);
-    showTimerElement();
+    //showTimerElement();
   }
 
   function resetTimerState() {
@@ -76,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
     secondsDisplay.textContent = "00";
     updateFocusedMinutesDisplay();
     toggleTimerControls(true);
-    hideTimerElement();
+    // hideTimerElement();
   }
 
   startTimerButton.addEventListener("click", startTimer);
@@ -102,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
       );
       timer = setInterval(updateTimerDisplay, 1000);
       toggleTimerControls(false);
-      showTimerElement();
+      //showTimerElement();
       updateTimerDisplay(); // Update display immediately after starting
     }
   }
@@ -175,11 +202,15 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function updateFocusedMinutesDisplay() {
-    focusedMinutesTodayElement.textContent = focusedMinutesToday;
+    if (focusedMinutesTodayElement) {
+      focusedMinutesTodayElement.textContent = focusedMinutesToday;
+    }
   }
 
   function updateTotalFocusedMinutesDisplay() {
-    focusedMinutesTotalElement.textContent = focusedMinutesTotal;
+    if (focusedMinutesTotalElement) {
+      focusedMinutesTotalElement.textContent = focusedMinutesTotal;
+    }
   }
 
   function updateSelectedDuration(button) {
@@ -205,19 +236,23 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       document.querySelector(".timer-btns").style.display = "none";
       startTimerButton.style.display = "none";
-      resetTimerButton.style.display = "inline-block";
+      resetTimerButton.style.display = "block";
     }
   }
 
-  // Show the timer element
-  function showTimerElement() {
-    timerElement.style.display = "flex";
-  }
+  // // Show the timer element
+  // function showTimerElement() {
+  //   if (timerElement) {
+  //     timerElement.style.display = "block";
+  //   }
+  // }
 
-  // Hide the timer element
-  function hideTimerElement() {
-    timerElement.style.display = "none";
-  }
+  // // Hide the timer element
+  // function hideTimerElement() {
+  //   if (timerElement) {
+  //     timerElement.style.display = "none";
+  //   }
+  // }
 
   // Broadcast timer state to other tabs
   function broadcastTimerState() {
@@ -289,10 +324,10 @@ document.addEventListener("DOMContentLoaded", function () {
   chrome.storage.local.get("pomodoroTimer", (data) => {
     if (data.pomodoroTimer && data.pomodoroTimer.isRunning) {
       toggleTimerControls(false); // Hide select and start button
-      showTimerElement();
+      // showTimerElement();
     } else {
       toggleTimerControls(true); // Show select and start button
-      hideTimerElement();
+      // hideTimerElement();
     }
   });
 });
