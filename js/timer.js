@@ -19,6 +19,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const pointsElement = document.getElementById("points");
   const timerElement = document.getElementById("timer");
 
+  const CIRCUMFERENCE = 2 * Math.PI * 45; // Radius is 45 as per the provided SVG
+  const baseTimerPathRemaining = document.getElementById(
+    "base-timer-path-remaining"
+  );
+  baseTimerPathRemaining.setAttribute("stroke-dasharray", CIRCUMFERENCE);
+
   // Check daily reset at midnight
   setInterval(checkDailyReset, 60 * 1000); // Check every minute
 
@@ -92,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
     startTime = Date.now() - (selectedDuration * 60 * 1000 - remainingTime);
     timer = setInterval(updateTimerDisplay, 1000);
     toggleTimerControls(false);
-    //showTimerElement();
+    showTimerElement();
   }
 
   function resetTimerState() {
@@ -101,9 +107,11 @@ document.addEventListener("DOMContentLoaded", function () {
     clearInterval(timer);
     minutesDisplay.textContent = "00";
     secondsDisplay.textContent = "00";
+    // Reset the stroke-dasharray to the full circumference
+    baseTimerPathRemaining.setAttribute("stroke-dasharray", CIRCUMFERENCE);
     updateFocusedMinutesDisplay();
     toggleTimerControls(true);
-    // hideTimerElement();
+    hideTimerElement();
   }
 
   startTimerButton.addEventListener("click", startTimer);
@@ -158,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
       addPoints(selectedDuration);
       alert("Time is up! You focused for " + selectedDuration + " minutes.");
       chrome.storage.local.set({ pomodoroTimer: { isRunning: false } }, () => {
-        resetTimerState();
+        toggleTimerControls(true);
         broadcastTimerState(); // Broadcast reset to other tabs
       });
     } else {
@@ -166,9 +174,18 @@ document.addEventListener("DOMContentLoaded", function () {
       const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
       minutesDisplay.textContent = String(minutes).padStart(2, "0");
       secondsDisplay.textContent = String(seconds).padStart(2, "0");
+      setCircleDasharray(remainingTime);
     }
     updateFocusedMinutesDisplay();
     updateTotalFocusedMinutesDisplay();
+  }
+
+  function setCircleDasharray(remainingTime) {
+    const timeFraction = remainingTime / (selectedDuration * 60 * 1000);
+    const circleDasharray = `${(timeFraction * CIRCUMFERENCE).toFixed(
+      0
+    )} ${CIRCUMFERENCE}`;
+    baseTimerPathRemaining.setAttribute("stroke-dasharray", circleDasharray);
   }
 
   function saveFocusedMinutes() {
@@ -246,19 +263,19 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // // Show the timer element
-  // function showTimerElement() {
-  //   if (timerElement) {
-  //     timerElement.style.display = "block";
-  //   }
-  // }
+  // Show the timer element
+  function showTimerElement() {
+    if (timerElement) {
+      timerElement.style.display = "flex";
+    }
+  }
 
-  // // Hide the timer element
-  // function hideTimerElement() {
-  //   if (timerElement) {
-  //     timerElement.style.display = "none";
-  //   }
-  // }
+  // Hide the timer element
+  function hideTimerElement() {
+    if (timerElement) {
+      timerElement.style.display = "none";
+    }
+  }
 
   // Broadcast timer state to other tabs
   function broadcastTimerState() {
@@ -330,10 +347,10 @@ document.addEventListener("DOMContentLoaded", function () {
   chrome.storage.local.get("pomodoroTimer", (data) => {
     if (data.pomodoroTimer && data.pomodoroTimer.isRunning) {
       toggleTimerControls(false); // Hide select and start button
-      // showTimerElement();
+      showTimerElement();
     } else {
       toggleTimerControls(true); // Show select and start button
-      // hideTimerElement();
+      hideTimerElement();
     }
   });
 });

@@ -2,6 +2,42 @@
   /* display: none; */
   line-height: 1;
 }
+.base-timer {
+  position: relative;
+  width: 475px;
+  height: 475px;
+}
+
+.base-timer__svg {
+  transform: scaleX(-1);
+  background-color: transparent;
+  border-radius: 50%;
+}
+
+.base-timer__circle {
+  fill: none;
+  stroke: none;
+}
+.base-timer__path-elapsed {
+  stroke-width: 7px;
+  stroke-linecap: round;
+  transform: rotate(90deg);
+  transform-origin: center;
+  transition: 1s linear all;
+  fill-rule: nonzero;
+  stroke: #ffdbad;
+}
+.base-timer__path-remaining {
+  stroke-width: 7px;
+  stroke-linecap: round;
+  transform: rotate(90deg);
+  transform-origin: center;
+  transition: 1s linear all;
+  fill-rule: nonzero;
+  stroke: #f88c00;
+  opacity: 0.5;
+}
+
 #reset-timer {
   margin-top: 32px;
 }
