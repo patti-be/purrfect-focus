@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
     isRunning = false;
     startTime = null;
     clearInterval(timer);
-    minutesDisplay.textContent = String(selectedDuration).padStart(2, "0");
+    minutesDisplay.textContent = "00";
     secondsDisplay.textContent = "00";
     updateFocusedMinutesDisplay();
     toggleTimerControls(true);
@@ -117,20 +117,26 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function startTimer() {
+    console.log("called start timer");
     if (!isRunning) {
-      isRunning = true;
-      startTime = Date.now();
-      const endTime = startTime + selectedDuration * 60 * 1000;
-      chrome.storage.local.set(
-        { pomodoroTimer: { isRunning: true, endTime, selectedDuration } },
-        () => {
-          broadcastTimerState(); // Broadcast start state to other tabs
-        }
-      );
-      timer = setInterval(updateTimerDisplay, 1000);
-      toggleTimerControls(false);
-      //showTimerElement();
-      updateTimerDisplay(); // Update display immediately after starting
+      const activeButton = document.querySelector(".timer_btn.is-active");
+      if (activeButton) {
+        console.log("theres an active button", activeButton);
+        isRunning = true;
+        startTime = Date.now();
+        const endTime = startTime + selectedDuration * 60 * 1000;
+        chrome.storage.local.set(
+          { pomodoroTimer: { isRunning: true, endTime, selectedDuration } },
+          () => {
+            broadcastTimerState(); // Broadcast start state to other tabs
+          }
+        );
+        timer = setInterval(updateTimerDisplay, 1000);
+        toggleTimerControls(false);
+        updateTimerDisplay(); // Update display immediately after starting
+      } else {
+        alert("Please select a duration before starting the timer.");
+      }
     }
   }
 

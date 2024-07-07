@@ -188,6 +188,16 @@ h2 {
   font-size: 16px;
   font-weight: 800;
 }
+.reset_btn {
+  color: #fff7ee;
+  cursor: pointer;
+  background-color: #f3ae55;
+  border-radius: 10px;
+  height: 40px;
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+}
 
 .timer_btn.is-active {
   color: #fff7ee;
