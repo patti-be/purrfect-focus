@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function addTodo() {
     const task = newTodoInput.value.trim();
+    console.log("todo input value", task);
     if (task) {
       const li = createTodoItem(task, false);
       todoList.appendChild(li);

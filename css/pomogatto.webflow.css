@@ -94,11 +94,6 @@ h2 {
   display: flex;
 }
 
-.minutes {
-  margin-bottom: 8px;
-  font-size: 32px;
-}
-
 .animation {
   width: 390px;
   position: absolute;
@@ -114,7 +109,7 @@ h2 {
   height: 86px;
   display: flex;
   position: relative;
-  box-shadow: 1px 4px 5px rgba(0, 0, 0, .2);
+  box-shadow: 1px 4px 5px rgba(0, 0, 0, 0.2);
 }
 
 .flex {
@@ -227,7 +222,7 @@ h2 {
   padding: 24px 32px;
   position: absolute;
   overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .todo-dropdown_bottom_inner {
@@ -240,7 +235,8 @@ h2 {
 }
 
 .task-input-wrapper {
-  font-family: Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans, Tahoma, sans-serif;
+  font-family: Trebuchet MS, Lucida Grande, Lucida Sans Unicode, Lucida Sans,
+    Tahoma, sans-serif;
   position: relative;
 }
 
@@ -282,7 +278,8 @@ h2 {
   line-height: 1;
 }
 
-.level_inner, .points-wrapper {
+.level_inner,
+.points-wrapper {
   justify-content: center;
   align-items: flex-start;
   display: flex;
@@ -325,11 +322,8 @@ h2 {
     width: 80%;
   }
 
-  .minutes {
-    font-size: 29px;
-  }
-
-  .to-do_dropdown, .todo-dropdown_bottom {
+  .to-do_dropdown,
+  .todo-dropdown_bottom {
     width: 100%;
   }
 
@@ -337,7 +331,8 @@ h2 {
     flex-flow: wrap-reverse;
   }
 
-  .timer, .badges {
+  .timer,
+  .badges {
     width: 100%;
   }
 
@@ -363,10 +358,6 @@ h2 {
 
   .stats-block {
     margin-top: 16px;
-  }
-
-  .minutes {
-    font-size: 24px;
   }
 
   .flex {
@@ -401,10 +392,9 @@ h2 {
   }
 }
 
-
 @font-face {
-  font-family: 'Cookies';
-  src: url('../fonts/Cookies.ttf') format('truetype');
+  font-family: "Cookies";
+  src: url("../fonts/Cookies.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;

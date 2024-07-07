@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "focused-minutes-total-txt"
   );
   const pointsElement = document.getElementById("points");
+  const timerElement = document.getElementById("timer");
 
   // Check if there's an active timer in storage
   chrome.storage.local.get(
@@ -64,6 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
     startTime = Date.now() - (selectedDuration * 60 * 1000 - remainingTime);
     timer = setInterval(updateTimerDisplay, 1000);
     toggleTimerControls(false);
+    showTimerElement();
   }
 
   function resetTimerState() {
@@ -74,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
     secondsDisplay.textContent = "00";
     updateFocusedMinutesDisplay();
     toggleTimerControls(true);
+    hideTimerElement();
   }
 
   startTimerButton.addEventListener("click", startTimer);
@@ -99,6 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
       );
       timer = setInterval(updateTimerDisplay, 1000);
       toggleTimerControls(false);
+      showTimerElement();
       updateTimerDisplay(); // Update display immediately after starting
     }
   }
@@ -121,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function () {
       addPoints(selectedDuration);
       alert("Time is up! You focused for " + selectedDuration + " minutes.");
       chrome.storage.local.set({ pomodoroTimer: { isRunning: false } }, () => {
-        toggleTimerControls(true);
+        resetTimerState();
         broadcastTimerState(); // Broadcast reset to other tabs
       });
     } else {
@@ -196,13 +200,23 @@ document.addEventListener("DOMContentLoaded", function () {
   function toggleTimerControls(showControls) {
     if (showControls) {
       document.querySelector(".timer-btns").style.display = "inline-block";
-      startTimerButton.style.display = "inline-block";
+      startTimerButton.style.display = "flex";
       resetTimerButton.style.display = "none";
     } else {
       document.querySelector(".timer-btns").style.display = "none";
       startTimerButton.style.display = "none";
       resetTimerButton.style.display = "inline-block";
     }
+  }
+
+  // Show the timer element
+  function showTimerElement() {
+    timerElement.style.display = "flex";
+  }
+
+  // Hide the timer element
+  function hideTimerElement() {
+    timerElement.style.display = "none";
   }
 
   // Broadcast timer state to other tabs
@@ -275,8 +289,10 @@ document.addEventListener("DOMContentLoaded", function () {
   chrome.storage.local.get("pomodoroTimer", (data) => {
     if (data.pomodoroTimer && data.pomodoroTimer.isRunning) {
       toggleTimerControls(false); // Hide select and start button
+      showTimerElement();
     } else {
       toggleTimerControls(true); // Show select and start button
+      hideTimerElement();
     }
   });
 });
