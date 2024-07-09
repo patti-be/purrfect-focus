@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
     isRunning = true;
     selectedDuration = duration;
     startTime = Date.now() - (selectedDuration * 60 * 1000 - remainingTime);
-    timer = setInterval(updateTimerDisplay, 1000);
+    timer = setInterval(updateTimerDisplay, 100);
     toggleTimerControls(false);
     showTimerElement();
   }
@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
             broadcastTimerState(); // Broadcast start state to other tabs
           }
         );
-        timer = setInterval(updateTimerDisplay, 1000);
+        timer = setInterval(updateTimerDisplay, 100);
         toggleTimerControls(false);
         updateTimerDisplay(); // Update display immediately after starting
       } else {
