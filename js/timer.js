@@ -112,6 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
     updateFocusedMinutesDisplay();
     toggleTimerControls(true);
     hideTimerElement();
+    broadcastTimerState(); // Broadcast reset to other tabs
   }
 
   startTimerButton.addEventListener("click", startTimer);
@@ -280,6 +281,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Broadcast timer state to other tabs
   function broadcastTimerState() {
     chrome.storage.local.get("pomodoroTimer", (data) => {
+      console.log("called broadcastTimerState", data, data.pomodoroTimer);
       chrome.storage.local.set(
         { pomodoroTimer: data.pomodoroTimer },
         function () {
@@ -310,7 +312,7 @@ document.addEventListener("DOMContentLoaded", function () {
             resetTimerState();
           }
         } else {
-          resetTimerState();
+          resetTimerState(); // Clear interval and update state
         }
       } else {
         // Handle cases where timerData is not defined or isRunning is not defined
