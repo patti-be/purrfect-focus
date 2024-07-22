@@ -1,3 +1,24 @@
+#animation-container {
+  top: 0;
+  position: absolute;
+}
+
+.level-container {
+  width: 150px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  margin-top: 8px;
+  height: 20px;
+  overflow: hidden;
+}
+
+.level-bar {
+  width: 0;
+  height: 100%;
+  background-color: #76c7c0;
+  border-radius: 5px;
+}
+
 .timer-countdown {
   /* display: none; */
   line-height: 1;

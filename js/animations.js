@@ -18,9 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
   );
   const pointsElement = document.getElementById("points");
   const timerElement = document.getElementById("timer");
-  const progressBar = document.getElementById("level-bar");
-  console.log([progressBar]);
-  console.log(document.getElementById("animation-1"));
+  const progressBar = document.getElementById("progress-bar");
 
   const CIRCUMFERENCE = 2 * Math.PI * 45; // Radius is 45 as per the provided SVG
   const baseTimerPathRemaining = document.getElementById(
@@ -35,28 +33,28 @@ document.addEventListener("DOMContentLoaded", function () {
       renderer: "svg",
       loop: true,
       autoplay: false,
-      path: "./animations/cat-idle.json",
+      path: "path/to/animation-1.json", // Update with your animation path
     }),
     2: lottie.loadAnimation({
       container: document.getElementById("animation-2"),
       renderer: "svg",
       loop: true,
       autoplay: false,
-      path: "./animations/cat-working.json",
+      path: "path/to/animation-2.json", // Update with your animation path
     }),
     3: lottie.loadAnimation({
       container: document.getElementById("animation-3"),
       renderer: "svg",
       loop: true,
       autoplay: false,
-      path: "./animations/cat-sad.json",
+      path: "path/to/animation-3.json", // Update with your animation path
     }),
     4: lottie.loadAnimation({
       container: document.getElementById("animation-4"),
       renderer: "svg",
       loop: false,
       autoplay: false,
-      path: "./animations/cat-party.json",
+      path: "path/to/animation-4.json", // Update with your animation path
     }),
   };
 
@@ -65,12 +63,10 @@ document.addEventListener("DOMContentLoaded", function () {
     Object.values(animations).forEach((anim, index) => {
       if (index + 1 === animationNumber) {
         anim.play();
-        console.log(anim);
-        anim.wrapper.style.display = "block";
+        anim.container.style.display = "block";
       } else {
-        console.log(anim);
         anim.pause();
-        anim.wrapper.style.display = "none";
+        anim.container.style.display = "none";
       }
     });
   }
@@ -145,7 +141,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Update progress bar display
       if (data.progress) {
-        console.log("there is stored progress:", data.progress);
         updateProgressBar(data.progress);
       }
     }
@@ -158,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
     timer = setInterval(updateTimerDisplay, 100);
     toggleTimerControls(false);
     showTimerElement();
-    showAnimation(2);
+    showAnimation(2); // Show animation-2 when the timer is running
   }
 
   function resetTimerState() {
@@ -172,8 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
     updateFocusedMinutesDisplay();
     toggleTimerControls(true);
     hideTimerElement();
-    broadcastTimerState();
-    showAnimation(1);
+    showAnimation(1); // Show animation-1 when the timer is not running
   }
 
   startTimerButton.addEventListener("click", startTimer);
@@ -203,8 +197,8 @@ document.addEventListener("DOMContentLoaded", function () {
         );
         timer = setInterval(updateTimerDisplay, 100);
         toggleTimerControls(false);
-        updateTimerDisplay();
-        showAnimation(2);
+        updateTimerDisplay(); // Update display immediately after starting
+        showAnimation(2); // Show animation-2 when the timer is running
       } else {
         alert("Please select a duration before starting the timer.");
       }
@@ -214,8 +208,8 @@ document.addEventListener("DOMContentLoaded", function () {
   function resetTimer() {
     chrome.storage.local.set({ pomodoroTimer: { isRunning: false } }, () => {
       resetTimerState();
-      broadcastTimerState();
-      showAnimation(3);
+      broadcastTimerState(); // Broadcast reset state to other tabs
+      showAnimation(3); // Show animation-3 when the timer is reset
     });
   }
 
@@ -228,30 +222,46 @@ document.addEventListener("DOMContentLoaded", function () {
       focusedMinutesTotal += selectedDuration;
       saveFocusedMinutes();
       addPoints(selectedDuration);
-      increaseProgressBar();
-      showAnimation(4);
-      alert("Time is up! You focused for " + selectedDuration + " minutes.");
+      increaseProgressBar(); // Increase progress bar
+      showAnimation(4); // Show animation-4 when the timer runs out naturally
       chrome.storage.local.set({ pomodoroTimer: { isRunning: false } }, () => {
         toggleTimerControls(true);
-        broadcastTimerState();
+        broadcastTimerState(); // Broadcast reset to other tabs
       });
     } else {
       const minutes = Math.floor(remainingTime / (1000 * 60));
       const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
       minutesDisplay.textContent = String(minutes).padStart(2, "0");
       secondsDisplay.textContent = String(seconds).padStart(2, "0");
-      setCircleDasharray(remainingTime);
+
+      // Update the stroke-dasharray value
+      const fraction = remainingTime / (selectedDuration * 60 * 1000);
+      const dashArrayValue = (fraction * CIRCUMFERENCE).toFixed(0);
+      baseTimerPathRemaining.setAttribute(
+        "stroke-dasharray",
+        `${dashArrayValue} ${CIRCUMFERENCE}`
+      );
     }
-    updateFocusedMinutesDisplay();
-    updateTotalFocusedMinutesDisplay();
   }
 
-  function setCircleDasharray(remainingTime) {
-    const timeFraction = remainingTime / (selectedDuration * 60 * 1000);
-    const circleDasharray = `${(timeFraction * CIRCUMFERENCE).toFixed(
-      0
-    )} ${CIRCUMFERENCE}`;
-    baseTimerPathRemaining.setAttribute("stroke-dasharray", circleDasharray);
+  function updateSelectedDuration(button) {
+    timerButtons.forEach((btn) => btn.classList.remove("is-active"));
+    button.classList.add("is-active");
+    selectedDuration = parseInt(button.dataset.duration);
+  }
+
+  function toggleTimerControls(enable) {
+    startTimerButton.disabled = !enable;
+    resetTimerButton.disabled = enable;
+    timerButtons.forEach((button) => (button.disabled = !enable));
+  }
+
+  function updateFocusedMinutesDisplay() {
+    focusedMinutesTodayElement.textContent = focusedMinutesToday;
+  }
+
+  function updateTotalFocusedMinutesDisplay() {
+    focusedMinutesTotalElement.textContent = focusedMinutesTotal;
   }
 
   function saveFocusedMinutes() {
@@ -261,181 +271,48 @@ document.addEventListener("DOMContentLoaded", function () {
     }-${today.getDate()}`;
     chrome.storage.local.get("focusData", (data) => {
       let focusData = data.focusData || {};
-      if (!focusData[dateKey]) {
-        focusData[dateKey] = 0;
-      }
-      focusData[dateKey] += selectedDuration;
+      focusData[dateKey] = focusedMinutesToday;
       chrome.storage.local.set({ focusData });
     });
   }
 
-  function addPoints(duration) {
-    let points = 0;
-    if (duration === 2) {
-      points = 5;
-    } else if (duration === 25) {
-      points = 5;
-    } else if (duration === 50) {
-      points = 15;
-    } else if (duration === 75) {
-      points = 25;
-    }
-
+  function addPoints(minutes) {
+    const points = minutes; // 1 point per minute
     chrome.storage.local.get("totalPoints", (data) => {
-      let totalPoints = data.totalPoints || 0;
-      totalPoints += points;
-      chrome.storage.local.set({ totalPoints }, () => {
-        pointsElement.textContent = totalPoints;
+      const currentPoints = data.totalPoints || 0;
+      const newTotalPoints = currentPoints + points;
+      chrome.storage.local.set({ totalPoints: newTotalPoints }, () => {
+        pointsElement.textContent = newTotalPoints;
       });
     });
   }
 
-  function updateFocusedMinutesDisplay() {
-    if (focusedMinutesTodayElement) {
-      focusedMinutesTodayElement.textContent = focusedMinutesToday;
-    }
-  }
-
-  function updateTotalFocusedMinutesDisplay() {
-    if (focusedMinutesTotalElement) {
-      focusedMinutesTotalElement.textContent = focusedMinutesTotal;
-    }
-  }
-
-  function updateSelectedDuration(button) {
-    // Remove the 'is-active' class from all buttons
-    timerButtons.forEach((btn) => btn.classList.remove("is-active"));
-    // Add the 'is-active' class to the clicked button
-    button.classList.add("is-active");
-
-    selectedDuration = parseInt(button.getAttribute("data-duration"), 10);
-    minutesDisplay.textContent = String(selectedDuration).padStart(2, "0");
-
-    if (isRunning) {
-      clearInterval(timer);
-      startTimer();
-    }
-  }
-
-  function toggleTimerControls(showControls) {
-    if (showControls) {
-      document.querySelector(".timer-btns").style.display = "inline-block";
-      startTimerButton.style.display = "flex";
-      resetTimerButton.style.display = "none";
-    } else {
-      document.querySelector(".timer-btns").style.display = "none";
-      startTimerButton.style.display = "none";
-      resetTimerButton.style.display = "block";
-    }
-  }
-  // Show the timer element
-  function showTimerElement() {
-    if (timerElement) {
-      timerElement.style.display = "flex";
-    }
-  }
-  // Hide the timer element
-  function hideTimerElement() {
-    if (timerElement) {
-      timerElement.style.display = "none";
-    }
-  }
-
-  // Broadcast timer state to other tabs
   function broadcastTimerState() {
-    chrome.storage.local.get("pomodoroTimer", (data) => {
-      console.log("called broadcastTimerState", data, data.pomodoroTimer);
-      chrome.storage.local.set(
-        { pomodoroTimer: data.pomodoroTimer },
-        function () {
-          if (chrome.runtime.lastError) {
-            console.error(
-              "Error setting pomodoroTimer:",
-              chrome.runtime.lastError
-            );
-            return;
-          }
-          console.log("Timer state broadcasted successfully.");
-        }
-      );
+    chrome.runtime.sendMessage({ action: "updateTimerState" });
+  }
+
+  function showTimerElement() {
+    timerElement.style.display = "block";
+  }
+
+  function hideTimerElement() {
+    timerElement.style.display = "none";
+  }
+
+  function increaseProgressBar() {
+    chrome.storage.local.get("progress", (data) => {
+      let currentProgress = data.progress || 0;
+      currentProgress += 5; // Increase progress by 5%
+      if (currentProgress > 100) {
+        currentProgress = 100;
+      }
+      chrome.storage.local.set({ progress: currentProgress }, () => {
+        updateProgressBar(currentProgress);
+      });
     });
   }
-  // Listen for changes in pomodoroTimer state from other tabs
-  chrome.storage.onChanged.addListener(function (changes, namespace) {
-    if (namespace === "local" && changes.pomodoroTimer) {
-      const timerData = changes.pomodoroTimer.newValue;
-      if (timerData && typeof timerData.isRunning !== "undefined") {
-        if (timerData.isRunning) {
-          const remainingTime = timerData.endTime - Date.now();
-          if (remainingTime > 0) {
-            clearInterval(timer);
-            startExistingTimer(remainingTime, timerData.selectedDuration);
-          } else {
-            resetTimerState();
-          }
-        } else {
-          resetTimerState(); // Clear interval and update state
-        }
-      } else {
-        // Handle cases where timerData is not defined or isRunning is not defined
-        console.warn(
-          "Unexpected timerData structure or undefined isRunning property",
-          timerData
-        );
-        toggleTimerControls(true); // Default to showing select and start button
-      }
-    }
 
-    // Update focused minutes if changed in storage
-    if (changes.focusData) {
-      const today = new Date();
-      const dateKey = `${today.getFullYear()}-${
-        today.getMonth() + 1
-      }-${today.getDate()}`;
-      focusedMinutesToday = changes.focusData.newValue[dateKey] || 0;
-      updateFocusedMinutesDisplay();
-      focusedMinutesTotal = Object.values(changes.focusData.newValue).reduce(
-        (acc, val) => acc + val,
-        0
-      );
-      updateTotalFocusedMinutesDisplay();
-    }
-
-    // Update total points if changed in storage
-    if (changes.totalPoints) {
-      pointsElement.textContent = changes.totalPoints.newValue || 0;
-    }
-  });
-
-  // Initial check to sync controls state
-  chrome.storage.local.get("pomodoroTimer", (data) => {
-    if (data.pomodoroTimer && data.pomodoroTimer.isRunning) {
-      toggleTimerControls(false); // Hide select and start button
-      showTimerElement();
-    } else {
-      toggleTimerControls(true); // Show select and start button
-      hideTimerElement();
-    }
-  });
+  function updateProgressBar(progress) {
+    progressBar.style.width = `${progress}%`;
+  }
 });
-
-// Increase progress bar by 5% and save to storage
-function increaseProgressBar() {
-  console.log("called 'increaseProgressBar'");
-  chrome.storage.local.get("progress", (data) => {
-    console.log(data.progress, "progress in storage");
-    let progress = data.progress || 0;
-    progress += 5;
-    if (progress > 100) progress = 100; // Cap progress at 100%
-    chrome.storage.local.set({ progress }, () => {
-      updateProgressBar(progress);
-    });
-  });
-}
-
-// Update progress bar width
-function updateProgressBar(progress) {
-  const progressBar = document.getElementById("level-bar");
-  console.log("called 'updateProgressBar'", progressBar);
-  progressBar.style.width = `${progress}%`;
-}

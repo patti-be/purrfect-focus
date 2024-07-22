@@ -17,6 +17,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     />
+    <script src="js/lottie.min.js"></script>
     <script src="js/extra.js"></script>
     <script src="js/jquery.min.js"></script>
   </head>
@@ -49,16 +50,12 @@
       </div>
       <div class="level">
         <div class="level_inner">
+          <h2 class="heading">Level: novice</h2>
           <div>
-            <h2 class="heading">Novice</h2>
-            <img
-              src="imgs/level-bar.png"
-              loading="lazy"
-              alt=""
-              class="progress-bar_line"
-            />
+            <div class="level-container">
+              <div class="level-bar" id="level-bar"></div>
+            </div>
           </div>
-          <img src="imgs/lisca.png" loading="lazy" alt="" class="level_img" />
         </div>
       </div>
     </header>
@@ -127,12 +124,12 @@
                   ></path>
                 </g>
               </svg>
-              <img
-                style="position: absolute; left: 62px; top: 7%"
-                width="80%"
-                src="./imgs/cat-working-gif.gif"
-                alt=""
-              />
+              <div id="animation-container">
+                <div id="animation-1"></div>
+                <div id="animation-2"></div>
+                <div id="animation-3"></div>
+                <div id="animation-4"></div>
+              </div>
             </div>
           </div>
           <div class="timer-btns">
