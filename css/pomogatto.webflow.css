@@ -5,7 +5,7 @@
 
 body {
   color: #333;
-  background-color: #ffedd6;
+  background-color: #fff2ea;
   font-family: Cookies, sans-serif;
   font-size: 14px;
   line-height: 20px;
@@ -17,6 +17,10 @@ h2 {
   font-size: 32px;
   font-weight: 700;
   line-height: 36px;
+}
+h3 {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .clock {
@@ -65,14 +69,12 @@ h2 {
 }
 
 .level {
-  justify-content: flex-end;
-  width: 33.3333%;
   display: flex;
 }
 
 .heading {
   font-family: Cookies, sans-serif;
-  font-size: 18px;
+  font-size: 24px;
   line-height: 1;
 }
 
@@ -140,8 +142,7 @@ h2 {
 }
 
 .pointss {
-  justify-content: center;
-  width: 33.3333%;
+  justify-content: flex-end;
   display: flex;
 }
 
