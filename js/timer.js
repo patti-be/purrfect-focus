@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
     Object.values(animations).forEach((anim, index) => {
       if (index + 1 === animationNumber) {
         anim.play();
-        console.log(anim);
+
         anim.wrapper.style.display = "block";
       } else {
         console.log(anim);
