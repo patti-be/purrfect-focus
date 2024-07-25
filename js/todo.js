@@ -38,10 +38,19 @@ document.addEventListener("DOMContentLoaded", function () {
   function createTodoItem(task, completed) {
     const li = document.createElement("li");
     li.classList.add("todo-item");
+
+    const taskWrapper = document.createElement("div");
+    taskWrapper.classList.add("task-wrapper");
+
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = completed;
     checkbox.addEventListener("change", toggleComplete);
+
+    const taskText = document.createTextNode(task);
+
+    taskWrapper.appendChild(checkbox);
+    taskWrapper.appendChild(taskText);
 
     const deleteIcon = document.createElement("i");
     deleteIcon.classList.add("fas", "fa-trash-alt", "todo-icon", "delete-icon");
@@ -51,10 +60,13 @@ document.addEventListener("DOMContentLoaded", function () {
     editIcon.classList.add("fas", "fa-pencil-alt", "todo-icon", "edit-icon");
     editIcon.addEventListener("click", editTodo);
 
-    li.appendChild(checkbox);
-    li.appendChild(document.createTextNode(task));
-    li.appendChild(deleteIcon);
-    li.appendChild(editIcon);
+    const editTodoWrapper = document.createElement("div");
+    editTodoWrapper.classList.add("edit-todo-wrapper");
+    editTodoWrapper.appendChild(editIcon);
+    editTodoWrapper.appendChild(deleteIcon);
+
+    li.appendChild(taskWrapper);
+    li.appendChild(editTodoWrapper);
 
     if (completed) {
       li.classList.add("completed");
@@ -64,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function toggleComplete(event) {
-    const li = event.target.parentElement;
+    const li = event.target.closest("li");
     const isChecked = event.target.checked;
     li.classList.toggle("completed");
     saveTodos();
@@ -80,7 +92,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function deleteTodo(event) {
-    const li = event.target.parentElement;
+    const li = event.target.closest("li");
+    console.log(li);
+    console.log(li.querySelector("input[type='checkbox']"));
     if (li.querySelector("input[type='checkbox']").checked) {
       addPoints(-5);
       // Check if previously all tasks were completed
@@ -92,13 +106,13 @@ document.addEventListener("DOMContentLoaded", function () {
     li.remove();
     saveTodos();
   }
-
   function editTodo(event) {
-    const li = event.target.parentElement;
-    const taskText = li.childNodes[1];
-    const newTask = prompt("Edit task:", taskText.textContent);
+    const li = event.target.closest("li");
+    const taskWrapper = li.querySelector(".task-wrapper");
+    const taskTextNode = taskWrapper.childNodes[1]; // second child is the text node
+    const newTask = prompt("Edit task:", taskTextNode.textContent);
     if (newTask !== null) {
-      taskText.textContent = newTask;
+      taskTextNode.textContent = newTask;
       saveTodos();
     }
   }
@@ -106,7 +120,8 @@ document.addEventListener("DOMContentLoaded", function () {
   function saveTodos() {
     const todos = [];
     todoList.querySelectorAll(".todo-item").forEach((li) => {
-      const task = li.childNodes[1].textContent;
+      const taskWrapper = li.querySelector(".task-wrapper");
+      const task = taskWrapper.childNodes[1].textContent; // second child is the text node
       const completed = li.classList.contains("completed");
       todos.push({ task, completed });
     });

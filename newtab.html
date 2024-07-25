@@ -39,60 +39,20 @@
         </div>
       </div>
       <div class="pointss">
-        <div class="points-blocks-wrapper">
-          <div class="points-block">
+        <div class="points-wrapper">
+          <div class="points-block" style="padding-left: 30px">
             <img src="imgs/bolt.svg" loading="lazy" alt="" />
-            <div class="points-block_txt">5</div>
-          </div>
-          <div class="points-block">
-            <img src="imgs/tomato.png" loading="lazy" alt="" />
-            <div class="points-block_txt">1 x</div>
+            <div class="points-block_txt" id="points">0</div>
           </div>
           <div class="points-block">
             <img src="imgs/clock.svg" loading="lazy" alt="" />
-            <div class="points-block_txt">25</div>
+            <div class="points-block_txt" id="focused-minutes-total-txt">0</div>
           </div>
         </div>
-        >
       </div>
     </header>
     <main class="section-todo">
       <div class="wrapper">
-        <div class="to-do_dropdown">
-          <div
-            data-w-id="aa37ea81-0029-ccdc-0b1d-978b8c8e4504"
-            class="todo-dropdown_top"
-          >
-            <div class="todo-dropdown_text">TO-DOs</div>
-            <img
-              src="imgs/chevron-down.svg"
-              loading="lazy"
-              data-w-id="02d13d03-a9c3-2876-ed14-a7086d91b32b"
-              alt=""
-              class="todo-dropdown_icon"
-            />
-          </div>
-          <div
-            data-w-id="c01244da-950f-123c-8e10-410c086b4922"
-            class="todo-dropdown_bottom"
-          >
-            <div
-              class="task-input-wrapper"
-              data-wf-page-id="6682db6aa13df2a3b7e0113c"
-              data-wf-element-id="fa69e6ce-44d6-bd9e-c87f-64554fd6a52a"
-            >
-              <input
-                class="task-input w-input"
-                maxlength="256"
-                placeholder="Add Task"
-                type="text"
-                id="new-todo"
-              />
-              <button class="btn-add w-button" id="add-todo">Add</button>
-            </div>
-            <ul role="list" id="todo-list" class="w-list-unstyled"></ul>
-          </div>
-        </div>
         <div class="timer">
           <div id="clock" class="clock">
             <div class="base-timer">
@@ -157,7 +117,42 @@
         <div class="badges"></div>
       </div>
     </main>
-    <footer class="footer"></footer>
+    <div class="dropdown-section">
+      <div class="to-do_dropdown">
+        <div
+          data-w-id="aa37ea81-0029-ccdc-0b1d-978b8c8e4504"
+          class="todo-dropdown_top"
+          style="color: #af6332"
+        >
+          <div class="todo-dropdown_text">ADD TASK</div>
+          <i
+            class="fa fa-plus todo-dropdown_icon"
+            data-w-id="02d13d03-a9c3-2876-ed14-a7086d91b32b"
+            aria-hidden="true"
+          ></i>
+        </div>
+        <div
+          data-w-id="c01244da-950f-123c-8e10-410c086b4922"
+          class="todo-dropdown_bottom"
+        >
+          <ul role="list" id="todo-list" class="w-list-unstyled"></ul>
+          <div
+            class="task-input-wrapper"
+            data-wf-page-id="6682db6aa13df2a3b7e0113c"
+            data-wf-element-id="fa69e6ce-44d6-bd9e-c87f-64554fd6a52a"
+          >
+            <input
+              class="task-input w-input"
+              maxlength="256"
+              placeholder="Add Task"
+              type="text"
+              id="new-todo"
+            />
+            <button class="btn-add w-button" id="add-todo">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <script src="js/todo.js"></script>
     <script src="js/timer.js"></script>
     <script src="js/main.js"></script>

@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function toggleTimerControls(showControls) {
     if (showControls) {
-      document.querySelector(".timer-btns").style.display = "inline-block";
+      document.querySelector(".timer-btns").style.display = "flex";
       startTimerButton.style.display = "flex";
       resetTimerButton.style.display = "none";
     } else {
