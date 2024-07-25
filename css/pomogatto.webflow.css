@@ -339,6 +339,10 @@ h3 {
   right: 0%;
 }
 
+.modal_card {
+  position: relative;
+}
+
 .modal_card_inner {
   z-index: 100;
   background-color: #fff2ea;
@@ -374,6 +378,7 @@ h3 {
   padding-top: 4px;
   display: flex;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 
 .modal_level {

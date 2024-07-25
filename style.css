@@ -22,7 +22,20 @@ main {
   top: 0;
   position: absolute;
 }
+.dance-animation {
+  width: 200px; /* Adjust the width as needed */
+  height: 200px; /* Adjust the height as needed */
+  margin: 0 auto; /* Center the animation */
+}
 
+.cat-ears {
+  width: 108%;
+  position: absolute;
+  top: -44px;
+}
+#modal {
+  display: none;
+}
 .dropdown-section {
   padding: 0 32px;
   display: flex;
