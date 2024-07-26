@@ -163,6 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Show header
     document.querySelector("header").style.display = "flex";
     document.querySelector("#timer-on").style.display = "none";
+    chrome.storage.local.set({ headerVisible: true, messageOn: false });
   }
 
   startTimerButton.addEventListener("click", startTimer);
@@ -185,7 +186,11 @@ document.addEventListener("DOMContentLoaded", function () {
         startTime = Date.now();
         const endTime = startTime + selectedDuration * 60 * 1000;
         chrome.storage.local.set(
-          { pomodoroTimer: { isRunning: true, endTime, selectedDuration } },
+          {
+            pomodoroTimer: { isRunning: true, endTime, selectedDuration },
+            headerVisible: false,
+            messageOn: true,
+          },
           () => {
             broadcastTimerState(); // Broadcast start state to other tabs
           }
@@ -194,6 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
         toggleTimerControls(false);
         updateTimerDisplay();
         showAnimation(2);
+
         // Hide header
         document.querySelector("header").style.display = "none";
         document.querySelector("#timer-on").style.display = "flex";
@@ -232,10 +238,17 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log(
         "Time is up! You focused for " + selectedDuration + " minutes."
       );
-      chrome.storage.local.set({ pomodoroTimer: { isRunning: false } }, () => {
-        toggleTimerControls(true);
-        broadcastTimerState();
-      });
+      chrome.storage.local.set(
+        {
+          pomodoroTimer: { isRunning: false },
+          headerVisible: true,
+          messageOn: false,
+        },
+        () => {
+          toggleTimerControls(true);
+          broadcastTimerState();
+        }
+      );
       // Show header
       document.querySelector("header").style.display = "flex";
       document.querySelector("#timer-on").style.display = "none";
@@ -366,50 +379,94 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   // Listen for changes in pomodoroTimer state from other tabs
   chrome.storage.onChanged.addListener(function (changes, namespace) {
-    if (namespace === "local" && changes.pomodoroTimer) {
-      const timerData = changes.pomodoroTimer.newValue;
-      if (timerData && typeof timerData.isRunning !== "undefined") {
-        if (timerData.isRunning) {
-          const remainingTime = timerData.endTime - Date.now();
-          if (remainingTime > 0) {
-            clearInterval(timer);
-            startExistingTimer(remainingTime, timerData.selectedDuration);
+    if (namespace === "local") {
+      if (changes.headerVisible) {
+        const header = document.querySelector("header");
+        if (header) {
+          header.style.display = changes.headerVisible.newValue
+            ? "flex"
+            : "none";
+        }
+      }
+      if (changes.messageOn) {
+        const messageOn = document.querySelector("#timer-on");
+        if (messageOn) {
+          messageOn.style.display = changes.messageOn.newValue
+            ? "flex"
+            : "none";
+        }
+      }
+
+      if (changes.pomodoroTimer) {
+        const timerData = changes.pomodoroTimer.newValue;
+        if (timerData && typeof timerData.isRunning !== "undefined") {
+          if (timerData.isRunning) {
+            const remainingTime = timerData.endTime - Date.now();
+            if (remainingTime > 0) {
+              clearInterval(timer);
+              startExistingTimer(remainingTime, timerData.selectedDuration);
+            } else {
+              resetTimerState();
+            }
           } else {
-            resetTimerState();
+            resetTimerState(); // Clear interval and update state
           }
         } else {
-          resetTimerState(); // Clear interval and update state
+          // Handle cases where timerData is not defined or isRunning is not defined
+          console.warn(
+            "Unexpected timerData structure or undefined isRunning property",
+            timerData
+          );
+          toggleTimerControls(true); // Default to showing select and start button
         }
-      } else {
-        // Handle cases where timerData is not defined or isRunning is not defined
-        console.warn(
-          "Unexpected timerData structure or undefined isRunning property",
-          timerData
+      }
+
+      // Update focused minutes if changed in storage
+      if (changes.focusData) {
+        const today = new Date();
+        const dateKey = `${today.getFullYear()}-${
+          today.getMonth() + 1
+        }-${today.getDate()}`;
+        focusedMinutesToday = changes.focusData.newValue[dateKey] || 0;
+        updateFocusedMinutesDisplay();
+        focusedMinutesTotal = Object.values(changes.focusData.newValue).reduce(
+          (acc, val) => acc + val,
+          0
         );
-        toggleTimerControls(true); // Default to showing select and start button
+        updateTotalFocusedMinutesDisplay();
+      }
+
+      // Update total points if changed in storage
+      if (changes.totalPoints) {
+        pointsElement.textContent = changes.totalPoints.newValue || 0;
       }
     }
-
-    // Update focused minutes if changed in storage
-    if (changes.focusData) {
-      const today = new Date();
-      const dateKey = `${today.getFullYear()}-${
-        today.getMonth() + 1
-      }-${today.getDate()}`;
-      focusedMinutesToday = changes.focusData.newValue[dateKey] || 0;
-      updateFocusedMinutesDisplay();
-      focusedMinutesTotal = Object.values(changes.focusData.newValue).reduce(
-        (acc, val) => acc + val,
-        0
-      );
-      updateTotalFocusedMinutesDisplay();
-    }
-
-    // Update total points if changed in storage
-    if (changes.totalPoints) {
-      pointsElement.textContent = changes.totalPoints.newValue || 0;
-    }
   });
+
+  // Initial check to sync controls state and header visibility
+  chrome.storage.local.get(
+    ["pomodoroTimer", "headerVisible", "messageOn"],
+    (data) => {
+      if (data.pomodoroTimer && data.pomodoroTimer.isRunning) {
+        toggleTimerControls(false); // Hide select and start button
+        showTimerElement();
+      } else {
+        toggleTimerControls(true); // Show select and start button
+        hideTimerElement();
+      }
+
+      if (data.headerVisible !== undefined) {
+        document.querySelector("header").style.display = data.headerVisible
+          ? "flex"
+          : "none";
+      }
+      if (data.messageOn !== undefined) {
+        document.querySelector("#timer-on").style.display = data.messageOn
+          ? "flex"
+          : "none";
+      }
+    }
+  );
 
   // Initial check to sync controls state
   chrome.storage.local.get("pomodoroTimer", (data) => {
