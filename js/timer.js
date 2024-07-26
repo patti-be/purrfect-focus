@@ -44,20 +44,6 @@ document.addEventListener("DOMContentLoaded", function () {
       autoplay: false,
       path: "./animations/cat-working.json",
     }),
-    3: lottie.loadAnimation({
-      container: document.getElementById("animation-3"),
-      renderer: "svg",
-      loop: true,
-      autoplay: false,
-      path: "./animations/cat-sad.json",
-    }),
-    4: lottie.loadAnimation({
-      container: document.getElementById("animation-4"),
-      renderer: "svg",
-      loop: false,
-      autoplay: false,
-      path: "./animations/cat-party.json",
-    }),
   };
 
   // Function to show a specific animation
@@ -174,6 +160,9 @@ document.addEventListener("DOMContentLoaded", function () {
     hideTimerElement();
     broadcastTimerState();
     showAnimation(1);
+    // Show header
+    document.querySelector("header").style.display = "flex";
+    document.querySelector("#timer-on").style.display = "none";
   }
 
   startTimerButton.addEventListener("click", startTimer);
@@ -205,6 +194,9 @@ document.addEventListener("DOMContentLoaded", function () {
         toggleTimerControls(false);
         updateTimerDisplay();
         showAnimation(2);
+        // Hide header
+        document.querySelector("header").style.display = "none";
+        document.querySelector("#timer-on").style.display = "flex";
       } else {
         alert("Please select a duration before starting the timer.");
       }
@@ -215,7 +207,8 @@ document.addEventListener("DOMContentLoaded", function () {
     chrome.storage.local.set({ pomodoroTimer: { isRunning: false } }, () => {
       resetTimerState();
       broadcastTimerState();
-      showAnimation(3);
+      //show sad modal
+      document.getElementById("modal-sad").style.display = "flex";
     });
   }
 
@@ -227,14 +220,25 @@ document.addEventListener("DOMContentLoaded", function () {
       focusedMinutesToday += selectedDuration;
       focusedMinutesTotal += selectedDuration;
       saveFocusedMinutes();
-      addPoints(selectedDuration);
+      const pointsToAdd = addPoints(selectedDuration); // Add points and get the added points
       increaseProgressBar();
-      showAnimation(4);
-      alert("Time is up! You focused for " + selectedDuration + " minutes.");
+
+      // Show modal and update content
+      document.getElementById("modal").style.display = "flex";
+      document.getElementById("focusedMinutes").textContent = selectedDuration;
+      document.getElementById("new-minutes").textContent = selectedDuration;
+      document.getElementById("new-points").textContent = pointsToAdd;
+
+      console.log(
+        "Time is up! You focused for " + selectedDuration + " minutes."
+      );
       chrome.storage.local.set({ pomodoroTimer: { isRunning: false } }, () => {
         toggleTimerControls(true);
         broadcastTimerState();
       });
+      // Show header
+      document.querySelector("header").style.display = "flex";
+      document.querySelector("#timer-on").style.display = "none";
     } else {
       const minutes = Math.floor(remainingTime / (1000 * 60));
       const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
@@ -271,14 +275,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function addPoints(duration) {
     let points = 0;
-    if (duration === 2) {
-      points = 5;
-    } else if (duration === 25) {
-      points = 5;
+    if (duration === 25) {
+      points = 10;
     } else if (duration === 50) {
-      points = 15;
-    } else if (duration === 75) {
       points = 25;
+    } else if (duration === 75) {
+      points = 40;
     }
 
     chrome.storage.local.get("totalPoints", (data) => {
@@ -288,6 +290,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pointsElement.textContent = totalPoints;
       });
     });
+
+    return points; // Return the added points
   }
 
   function updateFocusedMinutesDisplay() {

@@ -15,6 +15,12 @@ input[type="checkbox"] {
 .task-wrapper {
   font-size: 16px;
 }
+#timer-on {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+}
 
 #animation-container {
   top: 0;
