@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   const modal = document.getElementById("modal");
+  const modalSad = document.getElementById("modal-sad");
   const modalClose = document.querySelector(".modal_close");
   const btnCollect = document.querySelector(".btn-collect");
   const modalCover = document.querySelector(".modal_cover");
@@ -31,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Function to close the modal
   function closeModal() {
     modal.style.display = "none";
+    modalSad.style.display = "none";
   }
 
   // Add event listeners
@@ -45,4 +47,33 @@ document.addEventListener("DOMContentLoaded", function () {
     autoplay: true,
     path: "/animations/cat-party.json", // the path to the animation json
   });
+  lottie.loadAnimation({
+    container: document.getElementById("lottie-animation-sad"), // the dom element that will contain the animation
+    renderer: "svg",
+    loop: true,
+    autoplay: true,
+    path: "/animations/cat-sad.json",
+    resizeMode: "center",
+  });
+
+  const taskInputWrapper = document.getElementById("task-input-wrapper");
+  const todoList = document.getElementById("todo-list");
+  const todoDropdownBottom = document.querySelector(".todo-dropdown_bottom");
+
+  function adjustLayout() {
+    if (window.innerWidth < 767) {
+      console.log("small");
+      if (taskInputWrapper.nextSibling !== todoList) {
+        console.log(taskInputWrapper);
+        todoDropdownBottom.insertBefore(taskInputWrapper, todoList);
+      }
+    } else {
+      if (todoDropdownBottom.firstChild !== taskInputWrapper) {
+        todoDropdownBottom.insertBefore(todoList, taskInputWrapper);
+      }
+    }
+  }
+
+  window.addEventListener("resize", adjustLayout);
+  adjustLayout(); // Initial check
 });

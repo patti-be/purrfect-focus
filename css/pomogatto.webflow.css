@@ -38,7 +38,6 @@ h3 {
   justify-content: space-between;
   padding: 16px 32px;
   display: flex;
-  height: 13vh;
 }
 
 .main {
@@ -220,6 +219,7 @@ h3 {
   z-index: 90;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
+  padding: 18px;
 }
 
 .todo-dropdown_text {
@@ -239,7 +239,7 @@ h3 {
   padding: 16px;
   position: absolute;
   overflow: hidden;
-  bottom: 65px;
+  bottom: 75px;
 }
 
 .todo-dropdown_bottom_inner {
@@ -443,25 +443,58 @@ h3 {
 }
 
 @media screen and (max-width: 991px) {
-  .level_inner {
-    flex-flow: column;
-    align-items: flex-end;
-    display: flex;
-  }
-
   .level_img {
     margin-top: 0;
   }
 }
 
 @media screen and (max-width: 767px) {
+  .level_inner_flex {
+    flex-wrap: wrap;
+  }
+  .level-container {
+    margin-left: 0 !important;
+  }
+  .points-block {
+    width: auto !important;
+  }
+  main {
+    height: auto !important;
+  }
+  .dropdown-section {
+    position: static !important;
+    margin-top: 80px;
+  }
+
+  .to-do_dropdown {
+    position: relative;
+    background-color: transparent !important;
+  }
   .clock {
     width: 80%;
   }
 
   .to-do_dropdown,
   .todo-dropdown_bottom {
-    width: 100%;
+    width: 100% !important;
+  }
+
+  .to-do_dropdown {
+    flex-direction: column;
+  }
+
+  .todo-dropdown_bottom {
+    position: relative !important;
+    overflow: visible;
+    bottom: 0;
+  }
+
+  .todo-dropdown_top {
+    box-shadow: none !important;
+    cursor: unset !important;
+  }
+  .todo-dropdown_top i {
+    display: none !important;
   }
 
   .wrapper {
@@ -479,6 +512,22 @@ h3 {
 }
 
 @media screen and (max-width: 479px) {
+  .base-timer {
+    width: 100% !important;
+    height: auto !important;
+  }
+  .level-image {
+    margin-right: 4px;
+  }
+  .points-wrapper {
+    flex-direction: column !important;
+  }
+  .level {
+    flex-wrap: wrap;
+  }
+  .level_inner {
+    margin-left: 0 !important;
+  }
   .clock {
     width: 100%;
   }

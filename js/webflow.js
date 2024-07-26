@@ -11169,7 +11169,7 @@ Webflow.require("ix2").init({
                   selector: ".todo-dropdown_icon",
                   selectorGuids: ["ce2a8cdb-430a-bc51-2c63-98564b145abd"],
                 },
-                zValue: -180,
+                zValue: -45,
                 xUnit: "DEG",
                 yUnit: "DEG",
                 zUnit: "deg",
