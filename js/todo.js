@@ -93,13 +93,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function deleteTodo(event) {
     const li = event.target.closest("li");
-    const isCompleted = li.classList.contains("completed");
-    console.log(li);
-    console.log(li.querySelector("input[type='checkbox']"));
-
-    if (!isCompleted) {
-      addPoints(-5);
-    }
 
     // Check if previously all tasks were completed
     if (allTasksCompletedPreviously && !allTasksCompleted(true)) {
